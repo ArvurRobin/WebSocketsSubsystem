@@ -1,0 +1,25 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "WebSocketsSubsystem",
+	"Description": "",
+	"Category": "Communication",
+	"CreatedBy": "Robin Hasenbach",
+	"CreatedByURL": "https://github.com/ArvurRobin",
+	"DocsURL": "https://github.com/ArvurRobin/WebSocketsSubsystem",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": false,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules":
+	[
+		{
+			"Name": "WebSocketsSubsystem",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
