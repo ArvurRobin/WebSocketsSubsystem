@@ -12,11 +12,7 @@ public class WebSocketsSubsystem : ModuleRules
         {
             "Core",
             "CoreUObject",
-            "Engine"
-        });
-		
-		PrivateDependencyModuleNames.Add(new string[]
-        {
+            "Engine",
             "WebSockets"
         });
     }
