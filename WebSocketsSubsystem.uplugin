@@ -2,7 +2,7 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0",
-	"FriendlyName": "WebSocketsSubsystem",
+	"FriendlyName": "WebSockets Subsystem",
 	"Description": "",
 	"Category": "Communication",
 	"CreatedBy": "Robin Hasenbach",
@@ -14,8 +14,7 @@
 	"IsBetaVersion": false,
 	"IsExperimentalVersion": false,
 	"Installed": false,
-	"Modules":
-	[
+	"Modules": [
 		{
 			"Name": "WebSocketsSubsystem",
 			"Type": "Runtime",
