@@ -3,7 +3,7 @@
 	"Version": 1,
 	"VersionName": "1.0",
 	"FriendlyName": "WebSockets Subsystem",
-	"Description": "",
+	"Description": "GameInstance Subsystem for managing & communicating through WebSockets",
 	"Category": "Communication",
 	"CreatedBy": "Robin Hasenbach",
 	"CreatedByURL": "https://github.com/ArvurRobin",
