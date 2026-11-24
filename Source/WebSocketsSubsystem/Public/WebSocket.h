@@ -20,7 +20,7 @@ UCLASS(
 	Category = "WebSocket",
 	meta = (ToolTip = "A single WebSocket Object.")
 )
-class UWebSocket final : public UObject
+class WEBSOCKETSSUBSYSTEM_API UWebSocket final : public UObject
 {
 	GENERATED_BODY()
 
@@ -50,6 +50,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "WebSocket")
 	void Close(int32 StatusCode = 1000, const FString& Reason = TEXT(""));
+
+	UFUNCTION(BlueprintPure, Category = "WebSocket")
+	bool IsInitialized() const;
 
 	UFUNCTION(BlueprintPure, Category = "WebSocket")
 	bool IsConnected() const;

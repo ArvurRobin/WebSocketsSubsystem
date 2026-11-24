@@ -1,8 +1,5 @@
 // Copyright © 2026 Robin Hasenbach. All Rights Reserved.
 
-
-// Copyright © 2026 Robin Hasenbach. All Rights Reserved.
-
 #include "WebSocket.h"
 #include "IWebSocket.h"
 
@@ -51,7 +48,7 @@ void UWebSocket::BeginDestroy()
 
 void UWebSocket::Connect()
 {
-    if (InternalWebSocket.IsValid())
+    if (IsInitialized())
     {
         InternalWebSocket->Connect();
     }
@@ -59,20 +56,25 @@ void UWebSocket::Connect()
 
 void UWebSocket::Close(int32 StatusCode, const FString& Reason)
 {
-    if (InternalWebSocket.IsValid())
+    if (IsInitialized())
     {
         InternalWebSocket->Close(StatusCode, Reason);
     }
 }
 
+bool UWebSocket::IsInitialized() const
+{
+    return InternalWebSocket.IsValid();
+}
+
 bool UWebSocket::IsConnected() const
 {
-    return InternalWebSocket.IsValid() && InternalWebSocket->IsConnected();
+    return IsInitialized() && InternalWebSocket->IsConnected();
 }
 
 void UWebSocket::SendMessage(const FString& Message)
 {
-    if (InternalWebSocket.IsValid() && InternalWebSocket->IsConnected())
+    if (IsConnected())
     {
         InternalWebSocket->Send(Message);
     }
