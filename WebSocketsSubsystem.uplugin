@@ -1,24 +1,24 @@
 {
-	"FileVersion": 3,
-	"Version": 1,
-	"VersionName": "1.0",
-	"FriendlyName": "WebSockets Subsystem",
-	"Description": "GameInstance Subsystem for managing & communicating through WebSockets",
-	"Category": "Communication",
-	"CreatedBy": "Robin Hasenbach",
-	"CreatedByURL": "https://github.com/ArvurRobin",
-	"DocsURL": "https://github.com/ArvurRobin/WebSocketsSubsystem",
-	"MarketplaceURL": "",
-	"SupportURL": "",
-	"CanContainContent": false,
-	"IsBetaVersion": false,
-	"IsExperimentalVersion": false,
-	"Installed": false,
-	"Modules": [
-		{
-			"Name": "WebSocketsSubsystem",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
-		}
-	]
+    "FileVersion": 3,
+    "Version": 1,
+    "VersionName": "1.0.0",
+    "FriendlyName": "WebSockets Subsystem",
+    "Description": "A runtime plugin providing a GameInstance subsystem for creating, managing, and communicating through multiple WebSocket connections.",
+    "Category": "Networking",
+    "CreatedBy": "Robin Hasenbach",
+    "CreatedByURL": "https://github.com/ArvurRobin",
+    "DocsURL": "https://github.com/ArvurRobin/WebSocketsSubsystem",
+    "MarketplaceURL": "",
+    "SupportURL": "https://github.com/ArvurRobin/WebSocketsSubsystem/issues",
+    "CanContainContent": false,
+    "IsBetaVersion": false,
+    "IsExperimentalVersion": false,
+    "Installed": false,
+    "Modules": [
+        {
+            "Name": "WebSocketsSubsystem",
+            "Type": "Runtime",
+            "LoadingPhase": "Default"
+        }
+    ]
 }
