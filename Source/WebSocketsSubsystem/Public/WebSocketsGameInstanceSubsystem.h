@@ -11,48 +11,78 @@ class UWebSocket;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnWebSocketCreated, FName, WebSocketName, UWebSocket*, WebSocket);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWebSocketDestroyed, FName, WebSocketName);
 
-UCLASS(
-    DisplayName = "WebSockets Subsystem",
-    Category = "WebSockets",
-    meta = (ToolTip = "Manages WebSocket connections.")
-)
+UCLASS(meta = (DisplayName = "WebSockets Subsystem", ToolTip = "Manages named WebSocket connections for the current game instance."))
 class WEBSOCKETSSUBSYSTEM_API UWebSocketsSubsystem : public UGameInstanceSubsystem
 {
     GENERATED_BODY()
 
 public:
-    UPROPERTY(BlueprintAssignable, Category = "WebSockets")
+
+#pragma region Events
+
+    // Broadcast when a WebSocket wrapper has been created and registered.
+    UPROPERTY(BlueprintAssignable, Category = "WebSockets|Events")
     FOnWebSocketCreated OnWebSocketCreated;
 
-    UPROPERTY(BlueprintAssignable, Category = "WebSockets")
+    // Broadcast when a WebSocket has completed closure and has been unregistered.
+    UPROPERTY(BlueprintAssignable, Category = "WebSockets|Events")
     FOnWebSocketDestroyed OnWebSocketDestroyed;
+
+#pragma endregion
+
+#pragma region Lifecycle
 
     virtual void Initialize(FSubsystemCollectionBase& Collection) override;
     virtual void Deinitialize() override;
 
+#pragma endregion
+
 private:
+
+#pragma region Internal State
+
+    // Maps WebSocket names to their corresponding wrapper objects.
     UPROPERTY()
     TMap<FName, TObjectPtr<UWebSocket>> WebSockets;
 
+    // WebSockets whose close operation has been requested but not completed.
+    TSet<FName> PendingDestruction;
+
+    UFUNCTION()
+    void HandleWebSocketClosed(UWebSocket* InWebSocket);
+
+#pragma endregion
+
 public:
-    UFUNCTION(BlueprintCallable, Category = "WebSockets", meta = (DisplayName = "Create WebSocket"))
-    bool CreateWebSocket(FName WebSocketName, const FString& ServerURL, UWebSocket*& OutWebSocket, FString& OutMessage);
 
-    UFUNCTION(BlueprintCallable, Category = "WebSockets", meta = (DisplayName = "Create WebSocket with Headers"))
-    bool CreateWebSocketWithHeaders(FName WebSocketName, const FString& ServerURL, const TMap<FString, FString>& UpgradeHeaders, UWebSocket*& OutWebSocket, FString& OutMessage);
+#pragma region WebSocket Management
 
-    UFUNCTION(BlueprintCallable, Category = "WebSockets", meta = (DisplayName = "Get WebSocket"))
-    UWebSocket* GetWebSocket(FName WebSocketName) const;
+    // Creates and registers a WebSocket wrapper.
+    UFUNCTION(BlueprintCallable, Category = "WebSockets", meta = (DisplayName = "Create WebSocket", ToolTip = "Creates and registers a WebSocket wrapper. This does not connect to the server."))
+    bool CreateWebSocket(FName InWebSocketName, const FString& InServerURL, UWebSocket*& OutWebSocket, FString& OutMessage);
 
-    UFUNCTION(BlueprintPure, Category = "WebSockets", meta = (DisplayName = "Get All WebSockets"))
+    // Creates and registers a WebSocket wrapper with custom HTTP upgrade headers.
+    UFUNCTION(BlueprintCallable, Category = "WebSockets", meta = (DisplayName = "Create WebSocket with Headers", ToolTip = "Creates and registers a WebSocket wrapper with custom HTTP upgrade headers. This does not connect to the server."))
+    bool CreateWebSocketWithHeaders(FName InWebSocketName, const FString& InServerURL, const TMap<FString, FString>& InUpgradeHeaders, UWebSocket*& OutWebSocket, FString& OutMessage);
+
+    // Returns the WebSocket wrapper registered under the specified name.
+    UFUNCTION(BlueprintCallable, Category = "WebSockets", meta = (DisplayName = "Get WebSocket", ToolTip = "Returns the WebSocket wrapper registered under the specified name."))
+    UWebSocket* GetWebSocket(FName InWebSocketName) const;
+
+    // Returns a copy of all currently registered WebSocket wrappers.
+    UFUNCTION(BlueprintPure, Category = "WebSockets", meta = (DisplayName = "Get All WebSockets", ToolTip = "Returns a copy of all currently registered WebSocket wrappers."))
     TMap<FName, UWebSocket*> GetAllWebSockets() const;
 
-    // More efficient but C++ only version of GetAllWebSockets
+    // Returns all registered WebSockets without creating a copy. C++ only.
     const TMap<FName, TObjectPtr<UWebSocket>>& GetAllWebSockets_Const() const;
 
-    UFUNCTION(BlueprintCallable, Category = "WebSockets", meta = (DisplayName = "Destroy WebSocket"))
-    bool DestroyWebSocket(FName WebSocketName, FString& OutMessage);
+    // Requests closure and unregisters the WebSocket after its close event is received.
+    UFUNCTION(BlueprintCallable, Category = "WebSockets", meta = (DisplayName = "Destroy WebSocket", ToolTip = "Requests closure and unregisters the WebSocket after its close event is received."))
+    bool DestroyWebSocket(FName InWebSocketName, FString& OutMessage);
 
-    UFUNCTION(BlueprintCallable, Category = "WebSockets", meta = (DisplayName = "Destroy All WebSockets"))
+    // Requests closure of all registered WebSockets.
+    UFUNCTION(BlueprintCallable, Category = "WebSockets", meta = (DisplayName = "Destroy All WebSockets", ToolTip = "Requests closure of all registered WebSockets. Removal completes asynchronously as each close event is received."))
     bool DestroyAllWebSockets(FString& OutMessage);
+
+#pragma endregion
 };

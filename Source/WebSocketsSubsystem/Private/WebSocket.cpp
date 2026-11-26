@@ -10,22 +10,20 @@ bool UWebSocket::InitWebSocket(TSharedPtr<IWebSocket> InWebSocket)
         return false;
     }
 
+    // Prevent replacing an initialized connection without closing it first.
     if (InternalWebSocket.IsValid())
     {
-        InternalWebSocket->OnConnected().RemoveAll(this);
-        InternalWebSocket->OnConnectionError().RemoveAll(this);
-        InternalWebSocket->OnClosed().RemoveAll(this);
-        InternalWebSocket->OnMessage().RemoveAll(this);
-        InternalWebSocket->OnMessageSent().RemoveAll(this);
+        return false;
     }
 
     InternalWebSocket = MoveTemp(InWebSocket);
+    bHasClosed = false;
 
-    InternalWebSocket->OnConnected().AddUObject(this, &ThisClass::OnWebSocketConnected_Internal);
-    InternalWebSocket->OnConnectionError().AddUObject(this, &ThisClass::OnWebSocketConnectionError_Internal);
-    InternalWebSocket->OnClosed().AddUObject(this, &ThisClass::OnWebSocketClosed_Internal);
-    InternalWebSocket->OnMessage().AddUObject(this, &ThisClass::OnWebSocketMessageReceived_Internal);
-    InternalWebSocket->OnMessageSent().AddUObject(this, &ThisClass::OnWebSocketMessageSent_Internal);
+    InternalWebSocket->OnConnected().AddUObject(this, &UWebSocket::OnWebSocketConnected_Internal);
+    InternalWebSocket->OnConnectionError().AddUObject(this, &UWebSocket::OnWebSocketConnectionError_Internal);
+    InternalWebSocket->OnClosed().AddUObject(this, &UWebSocket::OnWebSocketClosed_Internal);
+    InternalWebSocket->OnMessage().AddUObject(this, &UWebSocket::OnWebSocketMessageReceived_Internal);
+    InternalWebSocket->OnMessageSent().AddUObject(this, &UWebSocket::OnWebSocketMessageSent_Internal);
 
     return true;
 }
@@ -48,17 +46,17 @@ void UWebSocket::BeginDestroy()
 
 void UWebSocket::Connect()
 {
-    if (IsInitialized())
+    if (IsInitialized() && !bHasClosed)
     {
         InternalWebSocket->Connect();
     }
 }
 
-void UWebSocket::Close(int32 StatusCode, const FString& Reason)
+void UWebSocket::Close(int32 InStatusCode, const FString& InReason)
 {
-    if (IsInitialized())
+    if (IsInitialized() && !bHasClosed)
     {
-        InternalWebSocket->Close(StatusCode, Reason);
+        InternalWebSocket->Close(InStatusCode, InReason);
     }
 }
 
@@ -69,38 +67,55 @@ bool UWebSocket::IsInitialized() const
 
 bool UWebSocket::IsConnected() const
 {
-    return IsInitialized() && InternalWebSocket->IsConnected();
+    return IsInitialized() && !bHasClosed && InternalWebSocket->IsConnected();
 }
 
-void UWebSocket::SendMessage(const FString& Message)
+void UWebSocket::SendMessage(const FString& InMessage)
 {
     if (IsConnected())
     {
-        InternalWebSocket->Send(Message);
+        InternalWebSocket->Send(InMessage);
     }
 }
 
 void UWebSocket::OnWebSocketConnected_Internal()
 {
-    OnWebSocketConnected.Broadcast();
+    if (!bHasClosed)
+    {
+        OnWebSocketConnected.Broadcast();
+    }
 }
 
-void UWebSocket::OnWebSocketConnectionError_Internal(const FString& Error)
+void UWebSocket::OnWebSocketConnectionError_Internal(const FString& InError)
 {
-    OnWebSocketConnectionError.Broadcast(Error);
+    OnWebSocketConnectionError.Broadcast(InError);
 }
 
-void UWebSocket::OnWebSocketClosed_Internal(int32 StatusCode, const FString& Reason, bool bWasClean)
+void UWebSocket::OnWebSocketClosed_Internal(int32 InStatusCode, const FString& InReason, bool bInWasClean)
 {
-    OnWebSocketClosed.Broadcast(StatusCode, Reason, bWasClean);
+    if (bHasClosed)
+    {
+        return;
+    }
+
+    bHasClosed = true;
+
+    OnWebSocketClosed.Broadcast(InStatusCode, InReason, bInWasClean);
+    OnWebSocketClosedInternal.Broadcast(this);
 }
 
-void UWebSocket::OnWebSocketMessageReceived_Internal(const FString& Message)
+void UWebSocket::OnWebSocketMessageReceived_Internal(const FString& InMessage)
 {
-    OnWebSocketMessageReceived.Broadcast(Message);
+    if (!bHasClosed)
+    {
+        OnWebSocketMessageReceived.Broadcast(InMessage);
+    }
 }
 
-void UWebSocket::OnWebSocketMessageSent_Internal(const FString& Message)
+void UWebSocket::OnWebSocketMessageSent_Internal(const FString& InMessage)
 {
-    OnWebSocketMessageSent.Broadcast(Message);
+    if (!bHasClosed)
+    {
+        OnWebSocketMessageSent.Broadcast(InMessage);
+    }
 }
