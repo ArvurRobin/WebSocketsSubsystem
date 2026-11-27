@@ -58,6 +58,8 @@ A connection is created through the subsystem and returned as a `UWebSocket` obj
 
 The subsystem is accessible through the Game Instance Subsystem functionality in Blueprint.
 
+![WebSocketsSubsystem Blueprint Nodes](Docs/Images/WebSocketsSubsystemNodes.png)
+
 A typical connection workflow looks like this:
 
 1. Get the **WebSockets Subsystem**.
@@ -69,6 +71,10 @@ A typical connection workflow looks like this:
 7. Call **Destroy WebSocket** when the connection is no longer needed.
 
 For servers that require additional HTTP upgrade headers, use **Create WebSocket with Headers** instead.
+
+![WebSocket Blueprint Nodes](Docs/Images/WebSocketNodes.png)
+
+![WebSocket Blueprint Event Binding Nodes](Docs/Images/WebSocketNodesEvents.png)
 
 ### C++
 
