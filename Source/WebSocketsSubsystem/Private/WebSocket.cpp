@@ -52,11 +52,11 @@ void UWebSocket::Connect()
     }
 }
 
-void UWebSocket::Close(int32 InStatusCode, const FString& InReason)
+void UWebSocket::Close(int32 StatusCode, const FString& Reason)
 {
     if (IsInitialized() && !bHasClosed)
     {
-        InternalWebSocket->Close(InStatusCode, InReason);
+        InternalWebSocket->Close(StatusCode, Reason);
     }
 }
 
@@ -70,11 +70,11 @@ bool UWebSocket::IsConnected() const
     return IsInitialized() && !bHasClosed && InternalWebSocket->IsConnected();
 }
 
-void UWebSocket::SendMessage(const FString& InMessage)
+void UWebSocket::SendMessage(const FString& Message)
 {
     if (IsConnected())
     {
-        InternalWebSocket->Send(InMessage);
+        InternalWebSocket->Send(Message);
     }
 }
 

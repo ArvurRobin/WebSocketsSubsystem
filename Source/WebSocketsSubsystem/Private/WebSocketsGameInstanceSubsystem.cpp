@@ -19,44 +19,44 @@ void UWebSocketsSubsystem::Deinitialize()
     Super::Deinitialize();
 }
 
-bool UWebSocketsSubsystem::CreateWebSocket(FName InWebSocketName, const FString& InServerURL, UWebSocket*& OutWebSocket, FString& OutMessage)
+bool UWebSocketsSubsystem::CreateWebSocket(FName WebSocketName, const FString& ServerURL, UWebSocket*& OutWebSocket, FString& OutMessage)
 {
-    return CreateWebSocketWithHeaders(InWebSocketName, InServerURL, TMap<FString, FString>(), OutWebSocket, OutMessage);
+    return CreateWebSocketWithHeaders(WebSocketName, ServerURL, TMap<FString, FString>(), OutWebSocket, OutMessage);
 }
 
-bool UWebSocketsSubsystem::CreateWebSocketWithHeaders(FName InWebSocketName, const FString& InServerURL, const TMap<FString, FString>& InUpgradeHeaders, UWebSocket*& OutWebSocket, FString& OutMessage)
+bool UWebSocketsSubsystem::CreateWebSocketWithHeaders(FName WebSocketName, const FString& ServerURL, const TMap<FString, FString>& UpgradeHeaders, UWebSocket*& OutWebSocket, FString& OutMessage)
 {
     // Reset output parameters.
     OutWebSocket = nullptr;
     OutMessage.Reset();
 
     // Validate WebSocket name.
-    if (InWebSocketName.IsNone())
+    if (WebSocketName.IsNone())
     {
         OutMessage = TEXT("WebSocket name cannot be None.");
         return false;
     }
 
     // Validate server URL.
-    if (InServerURL.IsEmpty())
+    if (ServerURL.IsEmpty())
     {
         OutMessage = TEXT("Server URL cannot be empty.");
         return false;
     }
 
-    if (!InServerURL.StartsWith(TEXT("ws://"), ESearchCase::IgnoreCase) &&
-        !InServerURL.StartsWith(TEXT("wss://"), ESearchCase::IgnoreCase))
+    if (!ServerURL.StartsWith(TEXT("ws://"), ESearchCase::IgnoreCase) &&
+        !ServerURL.StartsWith(TEXT("wss://"), ESearchCase::IgnoreCase))
     {
         OutMessage = TEXT("Invalid WebSocket URL. URL must start with 'ws://' or 'wss://'.");
         return false;
     }
 
     // Check for duplicate WebSocket names.
-    if (WebSockets.Contains(InWebSocketName))
+    if (WebSockets.Contains(WebSocketName))
     {
         OutMessage = FString::Printf(
             TEXT("A WebSocket with the name '%s' already exists."),
-            *InWebSocketName.ToString()
+            *WebSocketName.ToString()
         );
 
         return false;
@@ -65,9 +65,9 @@ bool UWebSocketsSubsystem::CreateWebSocketWithHeaders(FName InWebSocketName, con
     // Create the actual WebSocket connection.
     TSharedRef<IWebSocket> ActualSocket =
         FWebSocketsModule::Get().CreateWebSocket(
-            InServerURL,
+            ServerURL,
             TArray<FString>(),
-            InUpgradeHeaders
+            UpgradeHeaders
         );
 
     // Create and initialize the UObject wrapper.
@@ -85,20 +85,20 @@ bool UWebSocketsSubsystem::CreateWebSocketWithHeaders(FName InWebSocketName, con
     );
 
     // Register the WebSocket.
-    WebSockets.Add(InWebSocketName, WrapperSocket);
+    WebSockets.Add(WebSocketName, WrapperSocket);
 
     // Set output parameters.
     OutWebSocket = WrapperSocket;
     OutMessage = TEXT("WebSocket created successfully.");
 
-    OnWebSocketCreated.Broadcast(InWebSocketName, WrapperSocket);
+    OnWebSocketCreated.Broadcast(WebSocketName, WrapperSocket);
 
     return true;
 }
 
-UWebSocket* UWebSocketsSubsystem::GetWebSocket(FName InWebSocketName) const
+UWebSocket* UWebSocketsSubsystem::GetWebSocket(FName WebSocketName) const
 {
-    if (const TObjectPtr<UWebSocket>* FoundWebSocket = WebSockets.Find(InWebSocketName))
+    if (const TObjectPtr<UWebSocket>* FoundWebSocket = WebSockets.Find(WebSocketName))
     {
         return FoundWebSocket->Get();
     }

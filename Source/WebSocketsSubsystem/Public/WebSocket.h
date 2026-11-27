@@ -68,10 +68,10 @@ public:
 
     // Requests closure of the WebSocket connection.
     UFUNCTION(BlueprintCallable, Category = "WebSocket", meta = (ToolTip = "Requests closure of the WebSocket connection. The close operation may complete asynchronously."))
-    void Close(int32 InStatusCode = 1000, const FString& InReason = TEXT(""));
+    void Close(int32 StatusCode = 1000, const FString& Reason = TEXT(""));
 
     // Returns whether the wrapper has an initialized WebSocket implementation.
-    UFUNCTION(BlueprintPure, Category = "WebSocket", meta = (ToolTip = "Returns whether the wrapper has an initialized WebSocket implementation."))
+    UFUNCTION()
     bool IsInitialized() const;
 
     // Returns whether the WebSocket connection is currently connected.
@@ -80,7 +80,7 @@ public:
 
     // Sends a text message when the WebSocket is connected.
     UFUNCTION(BlueprintCallable, Category = "WebSocket", meta = (ToolTip = "Sends a text message when the WebSocket is connected."))
-    void SendMessage(const FString& InMessage);
+    void SendMessage(const FString& Message);
 
 #pragma endregion
 

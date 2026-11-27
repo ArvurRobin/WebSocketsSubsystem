@@ -59,15 +59,15 @@ public:
 
     // Creates and registers a WebSocket wrapper.
     UFUNCTION(BlueprintCallable, Category = "WebSockets", meta = (DisplayName = "Create WebSocket", ToolTip = "Creates and registers a WebSocket wrapper. This does not connect to the server."))
-    bool CreateWebSocket(FName InWebSocketName, const FString& InServerURL, UWebSocket*& OutWebSocket, FString& OutMessage);
+    bool CreateWebSocket(FName WebSocketName, const FString& ServerURL, UWebSocket*& OutWebSocket, FString& OutMessage);
 
     // Creates and registers a WebSocket wrapper with custom HTTP upgrade headers.
     UFUNCTION(BlueprintCallable, Category = "WebSockets", meta = (DisplayName = "Create WebSocket with Headers", ToolTip = "Creates and registers a WebSocket wrapper with custom HTTP upgrade headers. This does not connect to the server."))
-    bool CreateWebSocketWithHeaders(FName InWebSocketName, const FString& InServerURL, const TMap<FString, FString>& InUpgradeHeaders, UWebSocket*& OutWebSocket, FString& OutMessage);
+    bool CreateWebSocketWithHeaders(FName WebSocketName, const FString& ServerURL, const TMap<FString, FString>& UpgradeHeaders, UWebSocket*& OutWebSocket, FString& OutMessage);
 
     // Returns the WebSocket wrapper registered under the specified name.
     UFUNCTION(BlueprintCallable, Category = "WebSockets", meta = (DisplayName = "Get WebSocket", ToolTip = "Returns the WebSocket wrapper registered under the specified name."))
-    UWebSocket* GetWebSocket(FName InWebSocketName) const;
+    UWebSocket* GetWebSocket(FName WebSocketName) const;
 
     // Returns a copy of all currently registered WebSocket wrappers.
     UFUNCTION(BlueprintPure, Category = "WebSockets", meta = (DisplayName = "Get All WebSockets", ToolTip = "Returns a copy of all currently registered WebSocket wrappers."))
